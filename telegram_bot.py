@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()  # loads tokens from .env file
 import os
 import requests
 import json
@@ -106,11 +108,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.bot_data["username"] = bot_user.username
 
     keyboard = [
-        [
-            InlineKeyboardButton("🇮🇩 Indonesian", callback_data="lang_id"),
-            InlineKeyboardButton("🇺🇸 English", callback_data="lang_en"),
-        ]
-    ]
+    [
+        InlineKeyboardButton("🇮🇩 Indonesian", callback_data="lang_id"),
+        InlineKeyboardButton("🇺🇸 English", callback_data="lang_en"),
+    ],
+    [
+        InlineKeyboardButton("🇪🇸 Spanish", callback_data="lang_es"),
+        InlineKeyboardButton("🇮🇳 Hindi", callback_data="lang_hi"),
+    ],
+    [
+        InlineKeyboardButton("🇫🇷 French", callback_data="lang_fr"),
+        InlineKeyboardButton("🇸🇦 Arabic", callback_data="lang_ar"),
+    ],
+]
 
     msg = (
         f"👋 Welcome to {SITE_NAME}\n"
@@ -253,3 +263,6 @@ app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 def run_bot():
     print("🚀 ClarityBot is running... (Safe AI)")
     app.run_polling()
+
+if __name__ == "__main__":
+    run_bot()
