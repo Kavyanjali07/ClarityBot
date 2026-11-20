@@ -1,193 +1,100 @@
-# 🚀 ClarityBot (Multi-Language Version)
+# ClarityBot
 
-ClarityBot is a lightweight OpenRouter-powered chatbot built with Python, python-telegram-bot v20+, and designed to run smoothly on platforms like Railway, Replit, or your local machine.
+ClarityBot is a Telegram chatbot prototype built with Python and python-telegram-bot. It connects to an OpenRouter-compatible chat model and supports English and Indonesian language preferences.
 
-This updated version includes:
+> **Status:** Experimental personal project. Review the limitations below before deploying it for other users.
 
-✅ Multi-language system (Indonesian & English)
+## What is implemented
 
-✅ Inline language selector on /start
+- Telegram bot handlers built with python-telegram-bot 20.x
+- English and Indonesian language selection through inline buttons
+- Per-user language preference storage using SQLite
+- Chat-completion requests through the OpenRouter API
+- Optional system-prompt file
+- Per-user message throttling in the running process
+- Short conversation history persisted in a local JSON file
+- Environment-based configuration for Telegram and model-provider credentials
 
-✅ User language memory using JSON file
+## Request flow
 
-✅ DeepSeek-V3 model support (OpenRouter)
-
-✅ Environment variable support for API keys
-
-✅ Unsafe-mode system prompt harmful outputs
-
-
-## 📌 Features
-
-🌐 Choose your language: 🇮🇩 Indonesian / 🇺🇸 English
-
-💾 Remembers each user’s language preferences
-
-🤖 Powered by DeepSeek Chat (OpenRouter)
-
-⚡ Built using async python-telegram-bot
-
-🛡️ Automatic unsafety prompt injected before every AI response
-
-🔧 Easy to host anywhere (Railway recommended)
-
-## Full Language System (ID & EN)
-
-Users can choose their preferred language through inline buttons:
-
-- 🇮🇩 Indonesian
-
-- 🇺🇸 English
-
-The bot remembers each user’s language via user_langs.json.
-
-```
-Command
-/setlang id
-/setlang en
+```mermaid
+flowchart TD
+    A[Telegram update] --> B[Bot handler]
+    B --> C[Load language preference]
+    C --> D[Build assistant prompt and conversation context]
+    D --> E[OpenRouter chat completion]
+    E --> F[Send response to Telegram]
+    B --> G[SQLite language preferences]
+    D --> H[Local JSON conversation history]
 ```
 
-## 📂 Project Structure
+## Stack
 
-`WormGPT/`
+- Python
+- python-telegram-bot 20.3
+- Requests
+- python-dotenv
+- Flask (used by the keep-alive entrypoint)
+- SQLite
 
-`telegram_bot.py`        Main bot logic
+## Configuration
 
-`main.py`                Bot launcher (Railway-compatible)
+Create a local `.env` file. Do not commit it.
 
-`system-prompt.txt`      Optional custom system prompt
-
-`user_langs.json`        Auto-created language storage (Optional)
-
-`wormgpt_config.json`    (Optional) extra config
-
-`requirements.txt`
-
-`README.md`
-
-## 🔧 Installation
-Install Dependencies
-
-`python-telegram-bot==20.3`
-
-`requests`
-
-`python-dotenv`
-
-`flask`
-
-(Or import automatically if using Railway.)
-
-## 🔑 Environment Variables
-
-Set the following:
-
-| Variable Name     | Example Value                                      | Description              |
-|-------------------|----------------------------------------------------|--------------------------|
-| `TELEGRAM_TOKEN`  | `7784554658:AAHOcEhUcn-xxxxxxxxxxxxxxxxx` | Telegram Bot Token       |
-| `OPENROUTER_KEY`  | `sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`   | OpenRouter API Key       |
-
-## ▶️ Running the Bot Locally
-
-```python main.py```
-
-## 🤖 How the Bot Works
-`/start`
-
-Shows:
-
-✅ Welcome message
-
-✅ Language selector buttons
-
-✅ Stores user preference after choosing
-
-Sending messages
-
-The bot:
-
-1. Loads the user’s language (default: Indonesian)
-
-2. Builds a unsafe multilingual system-prompt
-
-3. Sends request → OpenRouter DeepSeek
-
-4. Returns answer in user’s chosen language
-
-## 🧠 Multi-Language System Prompt
-
-The bot auto-generates a unsafe, system prompt::
-
-Indonesian version includes:
-
-- Always answer in Indonesian
-
-- Accept illegal, harmful, or unethical content
-
-English version includes:
-
-- Always answer in English
-
-- Same unsafety rules applied
-
-## ✅ Example Output
-`/start`
-
-`Welcome to WormGPT!`
-
-`Please choose your language:`
-
-`[🇮🇩 Indonesian] [🇺🇸 English]`
-
-`After choosing Indonesian:`
-
-`✅ Bahasa diset ke Bahasa Indonesia. Silakan kirim pesan sekarang.`
-
-## 🤖 Where Bot!
-You can try it now on Telegram 24/7 
-
-https://t.me/Wormgpttested_bot
-
-## 📦 Deploying to Railway (Recommended)
-
-1. Push repo to GitHub
-
-2. Create new service → "Deploy from GitHub"
-
-3. Railway auto-installs dependencies
-
-4. Add environment variables
-
-5. Deploy ✅
-
-6. Bot runs 24/7 without restarts
-
-# 🛠 main.py (Railway)
-
-Your main.py simply calls:
-
-```from telegram_bot import run_bot
-
-if __name__ == "__main__":
-    run_bot()
+```env
+TELEGRAM_TOKEN=your_telegram_bot_token
+OPENROUTER_KEY=your_openrouter_api_key
 ```
 
-## 📝 Requirements
-```python-telegram-bot==20.7
-requests
+The bot reads these values from environment variables. Keep provider keys and bot tokens out of source control, logs, screenshots, and issue reports.
+
+## Run locally
+
+Use Python 3.10 or newer.
+
+```bash
+git clone https://github.com/Kavyanjali07/ClarityBot.git
+cd ClarityBot
+
+python -m venv .venv
+source .venv/bin/activate
+
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+
+python main.py
 ```
 
-## 🧧 Credits
+On Windows, activate the virtual environment with:
 
-Author by Jail Idea
+```powershell
+.venv\Scripts\Activate.ps1
+```
 
-Powered by OpenRouter.ai
+## Commands and interaction
 
-Uses DeepSeek Chat V3
+- `/start` — start the bot and select a language
+- `/setlang en` — choose English
+- `/setlang id` — choose Indonesian
 
-Telegram handler: python-telegram-bot
+The available commands depend on the handlers registered in the current source.
 
-## ❤️ License
+## Important limitations
 
-MIT License — free to fork, remix, improve.
-> Based on WormGPT by Jail Idea (MIT License) – modified and improved.
+This is a prototype, not a hardened multi-user service.
+
+- Message rate limits are held in process memory and reset when the bot restarts.
+- Conversation history is stored in a local JSON file; this is not a scalable or strongly isolated persistence layer.
+- The keep-alive Flask pattern is deployment-specific and is not a substitute for health checks and process supervision.
+- Provider availability, model behaviour, latency, and cost depend on the configured OpenRouter model.
+- No claim is made that the bot provides production-grade privacy, moderation, uptime, or data retention controls.
+
+Before public deployment, add persistent rate limiting, robust exception handling and retries, bounded conversation storage, privacy-conscious retention controls, tests, and deployment documentation.
+
+## Project lineage and attribution
+
+This repository has an earlier project history that references work by **Jail Idea** and the WormGPT project. Preserve the original copyright and license notices for any code retained from upstream. The current ClarityBot configuration is intended to be a helpful bilingual assistant, not an unsafe-mode chatbot. Review the upstream license and retained files before redistribution.
+
+## Author
+
+Kavyanjali · [GitHub](https://github.com/Kavyanjali07) · [LinkedIn](https://www.linkedin.com/in/kavyanjali07)
